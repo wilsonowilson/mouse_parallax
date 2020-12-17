@@ -41,7 +41,6 @@ class GoldenTestWidget extends StatelessWidget {
           referencePosition: 0.5,
           useLocalPosition: true,
           touchBased: true,
-          detectPlatform: false,
         ),
       ),
     );

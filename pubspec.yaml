@@ -1,5 +1,7 @@
 name: mouse_parallax
-description: Pointer based parallax animations.
+description: >
+  A simple way to implement pointer based parallax 
+  animations on multiple platforms.
 version: 0.2.0
 homepage: https://github.com/wilsonowilson/mouse_parallax
 

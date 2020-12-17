@@ -1,8 +1,6 @@
-import 'dart:io';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-
 import 'parallax_factor_calculator.dart';
 
 part 'animations.dart';
@@ -148,7 +146,6 @@ class ParallaxStack extends StatefulWidget {
     this.touchBased = false,
     this.useLocalPosition = false,
     this.referencePosition = 0.5,
-    this.detectPlatform = false,
     this.drag = const Duration(milliseconds: 100),
     this.resetOnExit = false,
     this.width,
@@ -180,15 +177,8 @@ class ParallaxStack extends StatefulWidget {
   /// The height of the [ParallaxStack]
   final double height;
 
-  /// Whether the [ParallaxStack] should listen to touch or mouse events
-  /// based on the current Platform. If it is set to true, it will listen
-  /// to touch events on Android and IOS, while MacOS, Linux, and Windows
-  /// will use hover events.
-  final bool detectPlatform;
-
-  /// Whether the [ParallaxStack] should work with touch events.
-  /// This can be automatically configured for each platform using
-  /// the [detectPlatform] property of the [ParallaxStack].
+  /// Whether the [ParallaxStack] should work with touch events
+  /// instead of hover events.
   final bool touchBased;
 
   /// Whether the animation should reset to the default position when
@@ -226,16 +216,11 @@ class _ParallaxStackState extends State<ParallaxStack> {
 
   @override
   Widget build(BuildContext context) {
-    var touchBased = widget.touchBased;
-    if (widget.detectPlatform) {
-      touchBased = Platform.isAndroid || Platform.isIOS;
-    }
-
     return SizedBox(
       width: widget.width,
       height: widget.height,
       child: _PointerListener(
-        touchBased: touchBased,
+        touchBased: widget.touchBased,
         onEnter: (e, x) => setState(() => hovering = true),
         onExit: (e, x) => setState(() {
           setState(() => hovering = false);
