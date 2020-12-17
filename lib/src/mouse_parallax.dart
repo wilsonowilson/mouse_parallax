@@ -145,9 +145,9 @@ class ParallaxStack extends StatefulWidget {
   ParallaxStack({
     Key key,
     @required this.layers,
-    @required this.touchBased,
+    this.touchBased = false,
     this.useLocalPosition = false,
-    this.referencePosition = -0.5,
+    this.referencePosition = 0.5,
     this.detectPlatform = false,
     this.drag = const Duration(milliseconds: 100),
     this.resetOnExit = false,
@@ -286,8 +286,10 @@ class _ParallaxStackState extends State<ParallaxStack> {
     final factor = RangeParallaxFactorCalculator(
       width: width,
       height: height,
-      referencePosition:
-          ReferencePosition(widget.referencePosition, widget.referencePosition),
+      referencePosition: ReferencePosition(
+        widget.referencePosition,
+        widget.referencePosition,
+      ),
       position: position,
       negative: true,
     ).calculate();

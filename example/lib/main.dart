@@ -15,8 +15,8 @@ class MyApp extends StatelessWidget {
           resetOnExit: true,
           layers: [
             ParallaxLayer(
-              yRotation: -0.1,
-              xOffset: 50,
+              yRotation: -0.35,
+              xOffset: 60,
               enable3D: true,
               center: true,
               child: Container(
@@ -27,9 +27,9 @@ class MyApp extends StatelessWidget {
             ),
             ParallaxLayer(
               yRotation: -0.4,
+              xOffset: 80,
               enable3D: true,
               center: true,
-              offset: const Offset(40, 40),
               child: Container(
                 width: 200,
                 height: 200,
@@ -39,10 +39,6 @@ class MyApp extends StatelessWidget {
               ),
             ),
           ],
-          referencePosition: 0.9999,
-          useLocalPosition: true,
-          touchBased: true,
-          detectPlatform: false,
         ),
       ),
     );
