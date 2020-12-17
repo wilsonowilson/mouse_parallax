@@ -69,4 +69,4 @@ class MyApp extends StatelessWidget {
 
 That example yields this result:
 
-![Parallax image](https://github.com/wilsonowilson/mouse_parallax/blob/master/assets/demo.gif)
+![Parallax image](https://raw.githubusercontent.com/wilsonowilson/mouse_parallax/master/assets/demo.gif)
