@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
+part of 'mouse_parallax.dart';
 
-class AnimatedTransform extends ImplicitlyAnimatedWidget {
-  const AnimatedTransform({
+class _AnimatedTransform extends ImplicitlyAnimatedWidget {
+  const _AnimatedTransform({
     Key key,
     @required this.child,
     @required Duration duration,
@@ -10,7 +10,9 @@ class AnimatedTransform extends ImplicitlyAnimatedWidget {
     this.zRotation = 0,
     this.xOffset = 0,
     this.yOffset = 0,
+    this.enable3d = false,
     Curve curve = Curves.ease,
+    this.dimensionalOffset = 0.001,
     VoidCallback onEnd,
   }) : super(
           key: key,
@@ -26,13 +28,15 @@ class AnimatedTransform extends ImplicitlyAnimatedWidget {
   final double zRotation;
   final double xOffset;
   final double yOffset;
+  final bool enable3d;
+  final double dimensionalOffset;
 
   @override
   _AnimatedTransformState createState() => _AnimatedTransformState();
 }
 
 class _AnimatedTransformState
-    extends AnimatedWidgetBaseState<AnimatedTransform> {
+    extends AnimatedWidgetBaseState<_AnimatedTransform> {
   Tween<double> _yRotation;
   Tween<double> _xRotation;
   Tween<double> _zRotation;
@@ -64,17 +68,19 @@ class _AnimatedTransformState
 
   @override
   Widget build(BuildContext context) {
+    final transform = Matrix4.identity();
+    if (widget.enable3d) transform..setEntry(3, 2, widget.dimensionalOffset);
+    transform
+      ..rotateY(_yRotation.evaluate(animation))
+      ..rotateX(_xRotation?.evaluate(animation))
+      ..rotateZ(_zRotation?.evaluate(animation));
     return Transform.translate(
       offset: Offset(
         _xOffset?.evaluate(animation) ?? 0,
         _yOffset?.evaluate(animation) ?? 0,
       ),
       child: Transform(
-        transform: Matrix4.identity()
-          ..setEntry(3, 2, 0.001)
-          ..rotateY(_yRotation.evaluate(animation))
-          ..rotateX(_xRotation?.evaluate(animation))
-          ..rotateZ(_zRotation?.evaluate(animation)),
+        transform: transform,
         alignment: Alignment.center,
         child: widget?.child,
       ),

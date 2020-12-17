@@ -35,8 +35,8 @@ void main() {
     );
   });
 
-  group('ParallaxFactorCalculatorTest', () {
-    ParallaxFactorCalculator getBasicCalculator({
+  group('RangeParallaxFactorCalculator Test', () {
+    RangeParallaxFactorCalculator getBasicCalculator({
       OffsetDefault offsetType,
       double referencePosition = 0.5,
       bool negate = false,
@@ -53,7 +53,7 @@ void main() {
           position = const Offset(500, 250);
           break;
       }
-      final calculator = ParallaxFactorCalculator(
+      final calculator = RangeParallaxFactorCalculator(
         width: 1000,
         height: 500,
         referencePosition: ReferencePosition(
@@ -68,25 +68,22 @@ void main() {
 
     test('Center is 0', () {
       final calculator = getBasicCalculator(offsetType: OffsetDefault.center);
-      final result = calculator.call();
+      final result = calculator.calculate();
       expect(result.x, 0);
-      expect(result.y, 0);
     });
     test('Left is 1', () {
       final calculator = getBasicCalculator(offsetType: OffsetDefault.topLeft);
 
-      final result = calculator.call();
+      final result = calculator.calculate();
       expect(result.x, 1);
-      expect(result.y, 1);
     });
     test('Right is -1', () {
       final calculator =
           getBasicCalculator(offsetType: OffsetDefault.bottomRight);
-      final result = calculator.call();
+      final result = calculator.calculate();
       expect(result.x, -1);
-      expect(result.y, -1);
     });
-    test('Negation Swaps Values', () {
+    test('Negation Mirrors Values', () {
       final leftCalculator = getBasicCalculator(
         offsetType: OffsetDefault.topLeft,
         negate: true,
@@ -95,12 +92,29 @@ void main() {
         offsetType: OffsetDefault.bottomRight,
         negate: true,
       );
-      final leftResult = leftCalculator.call();
-      final rightResult = rightCalculator.call();
+      final leftResult = leftCalculator.calculate();
+      final rightResult = rightCalculator.calculate();
       expect(leftResult.x, -1);
-      expect(leftResult.y, -1);
       expect(rightResult.x, 1);
-      expect(rightResult.y, 1);
+    });
+
+    test('Reference Position alters values', () {
+      final calculator = getBasicCalculator(
+        offsetType: OffsetDefault.topLeft,
+        negate: true,
+        referencePosition: 0,
+      );
+      final result = calculator.calculate();
+
+      expect(result.x, 0);
+      final calculator2 = getBasicCalculator(
+        offsetType: OffsetDefault.bottomRight,
+        negate: true,
+        referencePosition: 0,
+      );
+      final result2 = calculator2.calculate();
+
+      expect(result2.x, 2);
     });
   });
 }
