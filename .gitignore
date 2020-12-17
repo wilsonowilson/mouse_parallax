@@ -9,6 +9,13 @@
 .history
 .svn/
 
+# Ignoring native folders of the example as they can be re-generated easily
+
+example/android/
+example/ios/
+example/web/
+example/macos/
+
 # IntelliJ related
 *.iml
 *.ipr
