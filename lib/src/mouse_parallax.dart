@@ -2,11 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:mouse_parallax/src/parallax_factor_calculator.dart';
 
 import 'animations.dart';
 
 class ParallaxLayer {
-  ParallaxLayer({
+  const ParallaxLayer({
     @required this.child,
     this.xOffset = 0.0,
     this.yOffset = 0.0,
@@ -172,14 +173,17 @@ class _ParallaxStackState extends State<ParallaxStack> {
     final height = local ? constraints.maxHeight : screenSize.height;
     final position = local ? e.localPosition : e.position;
 
-    final referenceWidth = width * widget.referencePosition;
-    final referenceHeight = height * widget.referencePosition;
+    final factor = ParallaxFactorCalculator(
+      width: width,
+      height: height,
+      referencePosition: widget.referencePosition,
+      position: position,
+      negative: true,
+    ).call();
 
-    final relativeX = -(referenceWidth - position.dx) / referenceWidth;
-    final relativeY = -(referenceHeight - position.dy) / referenceHeight;
     setState(() {
-      xFactor = relativeX;
-      yFactor = relativeY;
+      xFactor = factor.x;
+      yFactor = factor.y;
     });
   }
 }

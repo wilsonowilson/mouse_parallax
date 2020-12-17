@@ -10,8 +10,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ParallaxStack(
-        width: 400,
-        height: 400,
+        width: double.infinity,
+        height: double.infinity,
         resetOnExit: true,
         layers: [
           ParallaxLayer(
