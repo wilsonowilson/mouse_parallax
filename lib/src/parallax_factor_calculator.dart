@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:meta/meta.dart';
+import 'package:flutter/material.dart';
 
 /// A simple wrapper for the x & y values of the
 /// Parallax Stack's reference position.
