@@ -2,6 +2,13 @@ import 'dart:ui';
 
 import 'package:meta/meta.dart';
 
+class ReferencePosition {
+  const ReferencePosition(this.x, this.y);
+
+  final double x;
+  final double y;
+}
+
 class ParallaxFactor {
   ParallaxFactor(this.x, this.y);
   final double x;
@@ -12,20 +19,32 @@ class ParallaxFactorCalculator {
   ParallaxFactorCalculator({
     @required this.width,
     @required this.height,
-    @required this.referencePosition,
     @required this.position,
-    @required this.negative,
-  });
+    this.negative = true,
+    this.referencePosition = const ReferencePosition(0.5, 0.5),
+  })
+
+  // : assert(
+  //         referencePosition > 0,
+  //         'Reference position must be a non-zero value',
+  //       ),
+  //       assert(
+  //         referencePosition <= 1,
+  //         'Reference position must be greater'
+  //         'than zero and less than one',
+  //       )
+
+  ;
 
   final double width;
   final double height;
-  final double referencePosition;
+  final ReferencePosition referencePosition;
   final Offset position;
   final bool negative;
 
   ParallaxFactor call() {
-    final referenceWidth = width * referencePosition;
-    final referenceHeight = height * referencePosition;
+    final referenceWidth = width * referencePosition.x;
+    final referenceHeight = height * referencePosition.y;
 
     final relativeX = (referenceWidth - position.dx) / referenceWidth;
     final relativeY = (referenceHeight - position.dy) / referenceHeight;

@@ -176,7 +176,8 @@ class _ParallaxStackState extends State<ParallaxStack> {
     final factor = ParallaxFactorCalculator(
       width: width,
       height: height,
-      referencePosition: widget.referencePosition,
+      referencePosition:
+          ReferencePosition(widget.referencePosition, widget.referencePosition),
       position: position,
       negative: true,
     ).call();

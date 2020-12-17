@@ -56,7 +56,10 @@ void main() {
       final calculator = ParallaxFactorCalculator(
         width: 1000,
         height: 500,
-        referencePosition: referencePosition,
+        referencePosition: ReferencePosition(
+          referencePosition,
+          referencePosition,
+        ),
         position: position,
         negative: negate,
       );

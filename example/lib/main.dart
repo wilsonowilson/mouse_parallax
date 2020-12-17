@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ],
-        referencePosition: 0.5,
+        referencePosition: 0.10,
         useLocalPosition: true,
         touchBased: true,
         detectPlatform: false,
