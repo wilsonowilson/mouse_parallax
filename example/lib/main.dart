@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
           layers: [
             ParallaxLayer(
               yRotation: -0.35,
+              xRotation: 0.35,
               xOffset: 60,
               enable3D: true,
               center: true,
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
             ),
             ParallaxLayer(
               yRotation: -0.4,
+              xRotation: 0.35,
               xOffset: 80,
               enable3D: true,
               center: true,
