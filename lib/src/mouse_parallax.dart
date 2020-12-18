@@ -153,7 +153,8 @@ class ParallaxStack extends StatefulWidget {
     this.dragCurve = Curves.ease,
     this.resetDuration = const Duration(milliseconds: 1200),
     this.resetCurve = Curves.ease,
-  }) : super(key: key);
+  })  : assert(layers != null && layers.isNotEmpty),
+        super(key: key);
 
   /// A list of [ParallaxLayer]s which will be mapped to widget depending
   /// on the properties of the layer.
