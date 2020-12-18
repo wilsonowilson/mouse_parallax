@@ -1,5 +1,7 @@
 # mouse_parallax
 
+![Mouse Parallax](https://github.com/wilsonowilson/mouse_parallax/blob/master/assets/header.gif)
+
 A Pointer-Based Animation Package.
 The goal of this package is to make mouse and touch based 
 parallax effects as simple as possible.
