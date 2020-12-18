@@ -24,7 +24,7 @@ class ParallaxLayer {
     this.enable3D = false,
     this.center = false,
     this.offset = const Offset(0, 0),
-    this.dimensionalOffset = 0.001,
+    this.dimensionalOffset,
   }) {
     if (!enable3D) {
       assert(
@@ -251,7 +251,7 @@ class _ParallaxStackState extends State<ParallaxStack> {
         curve: hovering ? widget.dragCurve : widget.resetCurve,
         yRotation: e.yRotation * xFactor,
         enable3d: e.enable3D,
-        dimensionalOffset: e.dimensionalOffset,
+        dimensionalOffset: e.dimensionalOffset ?? 0.001,
         zRotation: e.zRotation * xFactor,
         xRotation: e.xRotation * yFactor,
         xOffset: e.xOffset * xFactor,

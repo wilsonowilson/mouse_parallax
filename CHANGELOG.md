@@ -1,3 +1,6 @@
+## 0.2.2
+ * Fixed dimensionalOffset assertion
+
 ## 0.2.1+1
  * Docs: Minor fixes and improvements
 
