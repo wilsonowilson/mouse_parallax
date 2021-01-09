@@ -1,15 +1,144 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'parallax_factor_calculator.dart';
 
-part 'animations.dart';
+typedef _HoverConstraintCallback = void Function(
+  PointerEvent hoverEvent,
+  BoxConstraints constraints,
+);
+
+class _PointerListener extends StatelessWidget {
+  const _PointerListener({
+    Key key,
+    @required this.child,
+    @required this.onEnter,
+    @required this.onExit,
+    @required this.onHover,
+    this.touchBased = false,
+  }) : super(key: key);
+
+  final _HoverConstraintCallback onEnter;
+  final _HoverConstraintCallback onExit;
+  final _HoverConstraintCallback onHover;
+  final bool touchBased;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget listener;
+
+    return LayoutBuilder(builder: (context, constraints) {
+      if (touchBased == true)
+        listener = Listener(
+          onPointerHover: (e) => onHover(e, constraints),
+          onPointerDown: (e) => onEnter(e, constraints),
+          onPointerUp: (e) => onExit(e, constraints),
+          child: child,
+        );
+      listener = MouseRegion(
+        onHover: (e) => onHover(e, constraints),
+        onEnter: (e) => onEnter(e, constraints),
+        onExit: (e) => onExit(e, constraints),
+        child: child,
+      );
+      return listener;
+    });
+  }
+}
+
+/// [_AnimatedTransform] is a custom implicitly animated widget
+/// responsible for animating the transformations of its child.
+class _AnimatedTransform extends ImplicitlyAnimatedWidget {
+  const _AnimatedTransform({
+    Key key,
+    @required this.child,
+    @required Duration duration,
+    this.yRotation = 0,
+    this.xRotation = 0,
+    this.zRotation = 0,
+    this.xOffset = 0,
+    this.yOffset = 0,
+    this.enable3d = false,
+    Curve curve = Curves.ease,
+    this.dimensionalOffset = 0.001,
+    VoidCallback onEnd,
+  }) : super(
+          key: key,
+          curve: curve,
+          duration: duration,
+          onEnd: onEnd,
+        );
+
+  final Widget child;
+  final double yRotation;
+  final double xRotation;
+  final double zRotation;
+  final double xOffset;
+  final double yOffset;
+  final bool enable3d;
+  final double dimensionalOffset;
+
+  @override
+  _AnimatedTransformState createState() => _AnimatedTransformState();
+}
+
+class _AnimatedTransformState
+    extends AnimatedWidgetBaseState<_AnimatedTransform> {
+  Tween<double> _yRotation;
+  Tween<double> _xRotation;
+  Tween<double> _zRotation;
+  Tween<double> _xOffset;
+  Tween<double> _yOffset;
+
+  @override
+  void forEachTween(TweenVisitor<dynamic> visitor) {
+    _yRotation = visitor(_yRotation, widget.yRotation,
+        (dynamic e) => Tween<double>(begin: e as double)) as Tween<double>;
+    _zRotation = visitor(_zRotation, widget.zRotation,
+        (dynamic e) => Tween<double>(begin: e as double)) as Tween<double>;
+    _xRotation = visitor(
+      _xRotation,
+      widget.xRotation,
+      (dynamic e) => Tween<double>(begin: e as double),
+    ) as Tween<double>;
+    _xOffset = visitor(
+      _xOffset,
+      widget.xOffset,
+      (dynamic e) => Tween<double>(begin: e as double),
+    ) as Tween<double>;
+    _yOffset = visitor(
+      _yOffset,
+      widget.yOffset,
+      (dynamic e) => Tween<double>(begin: e as double),
+    ) as Tween<double>;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final transform = Matrix4.identity();
+    if (widget.enable3d) transform..setEntry(3, 2, widget.dimensionalOffset);
+    transform
+      ..rotateY(_yRotation.evaluate(animation))
+      ..rotateX(_xRotation?.evaluate(animation))
+      ..rotateZ(_zRotation?.evaluate(animation));
+    return Transform.translate(
+      offset: Offset(
+        _xOffset?.evaluate(animation) ?? 0,
+        _yOffset?.evaluate(animation) ?? 0,
+      ),
+      child: Transform(
+        transform: transform,
+        alignment: Alignment.center,
+        child: widget.child,
+      ),
+    );
+  }
+}
 
 /// A layer in the parallax stack.
 /// This serves as a blueprint for the transformations of a widget in a
 /// [ParallaxStack]. It contains all the animatable properties of the child.
 /// This is not a widget.
-@immutable
 class ParallaxLayer {
   /// Creates a Parallax layer. It contains all the animatable properties of
   /// the child, as well as properties like [center] and [offset] which
@@ -86,50 +215,6 @@ class ParallaxLayer {
   final double dimensionalOffset;
 }
 
-typedef _OnHoverCallback = void Function(
-  PointerEvent hoverEvent,
-  BoxConstraints constraints,
-);
-
-class _PointerListener extends StatelessWidget {
-  const _PointerListener({
-    Key key,
-    @required this.child,
-    @required this.onEnter,
-    @required this.onExit,
-    @required this.onHover,
-    this.touchBased = false,
-  }) : super(key: key);
-
-  final _OnHoverCallback onEnter;
-  final _OnHoverCallback onExit;
-  final _OnHoverCallback onHover;
-  final bool touchBased;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    Widget listener;
-
-    return LayoutBuilder(builder: (context, constraints) {
-      if (touchBased == true)
-        listener = Listener(
-          onPointerHover: (e) => onHover(e, constraints),
-          onPointerDown: (e) => onEnter(e, constraints),
-          onPointerUp: (e) => onExit(e, constraints),
-          child: child,
-        );
-      listener = MouseRegion(
-        onHover: (e) => onHover(e, constraints),
-        onEnter: (e) => onEnter(e, constraints),
-        onExit: (e) => onExit(e, constraints),
-        child: child,
-      );
-      return listener;
-    });
-  }
-}
-
 /// A Widget that allows you to stack parallax layers.
 /// This is a wrapper around the [Stack] widget so it behaves similarly to it.
 /// By default, it expands to fill the parent, so it's size can be adjusted
@@ -143,27 +228,22 @@ class ParallaxStack extends StatefulWidget {
   ParallaxStack({
     Key key,
     @required this.layers,
-    this.touchBased = false,
-    this.useLocalPosition = false,
-    this.referencePosition = 0.5,
-    this.drag = const Duration(milliseconds: 100),
-    this.resetOnExit = false,
     this.width,
     this.height,
+    this.referencePosition = 0.5,
+    this.touchBased = false,
+    this.resetOnExit = false,
+    this.useLocalPosition = false,
     this.dragCurve = Curves.ease,
-    this.resetDuration = const Duration(milliseconds: 1200),
     this.resetCurve = Curves.ease,
+    this.drag = const Duration(milliseconds: 100),
+    this.resetDuration = const Duration(milliseconds: 1200),
   })  : assert(layers != null && layers.isNotEmpty),
         super(key: key);
 
   /// A list of [ParallaxLayer]s which will be mapped to widget depending
   /// on the properties of the layer.
   final List<ParallaxLayer> layers;
-
-  /// Where the parallax effect should be referenced from. This is a scale
-  /// from 0-1. Its default value is 0.5, meaning that the
-  ///  parallax is referenced from the center.
-  final double referencePosition;
 
   /// Whether the parallax should be referenced from the size and position
   /// of the [ParallaxStack]. If it is false, the Parallax will be measured
@@ -177,6 +257,11 @@ class ParallaxStack extends StatefulWidget {
 
   /// The height of the [ParallaxStack]
   final double height;
+
+  /// Where the parallax effect should be referenced from. This is a scale
+  /// from 0-1. Its default value is 0.5, meaning that the
+  ///  parallax is referenced from the center.
+  final double referencePosition;
 
   /// Whether the [ParallaxStack] should work with touch events
   /// instead of hover events.
@@ -222,14 +307,12 @@ class _ParallaxStackState extends State<ParallaxStack> {
       height: widget.height,
       child: _PointerListener(
         touchBased: widget.touchBased,
-        onEnter: (e, x) => setState(() => hovering = true),
-        onExit: (e, x) => setState(() {
-          setState(() => hovering = false);
+        onEnter: (_, __) => setState(() => hovering = true),
+        onExit: (_, __) => setState(() {
+          hovering = false;
           if (widget.resetOnExit) {
-            setState(() {
-              xFactor = 0.0;
-              yFactor = 0.0;
-            });
+            xFactor = 0.0;
+            yFactor = 0.0;
           }
         }),
         onHover: _mapPointerEventToFactor,
@@ -240,23 +323,21 @@ class _ParallaxStackState extends State<ParallaxStack> {
     );
   }
 
-  Widget _mapParallaxLayerToWidget(ParallaxLayer e) {
-    var child = e.child;
-
-    if (e.center) child = Center(child: e.child);
+  Widget _mapParallaxLayerToWidget(ParallaxLayer layer) {
+    var child = layer.child;
+    if (layer.center) child = Center(child: layer.child);
     return Transform.translate(
-      offset: e.offset,
-      // Custom implicitly animated widget.
+      offset: layer.offset,
       child: _AnimatedTransform(
         duration: hovering ? widget.drag : widget.resetDuration,
         curve: hovering ? widget.dragCurve : widget.resetCurve,
-        yRotation: e.yRotation * xFactor,
-        enable3d: e.enable3D,
-        dimensionalOffset: e.dimensionalOffset ?? 0.001,
-        zRotation: e.zRotation * xFactor,
-        xRotation: e.xRotation * yFactor,
-        xOffset: e.xOffset * xFactor,
-        yOffset: e.yOffset * yFactor,
+        yRotation: layer.yRotation * xFactor,
+        enable3d: layer.enable3D,
+        dimensionalOffset: layer.dimensionalOffset ?? 0.001,
+        zRotation: layer.zRotation * xFactor,
+        xRotation: layer.xRotation * yFactor,
+        xOffset: layer.xOffset * xFactor,
+        yOffset: layer.yOffset * yFactor,
         child: child,
       ),
     );
@@ -269,15 +350,15 @@ class _ParallaxStackState extends State<ParallaxStack> {
     final height = local ? constraints.maxHeight : screenSize.height;
     final position = local ? e.localPosition : e.position;
 
-    final factor = RangeParallaxFactorCalculator(
+    final factor = RelativeParallaxFactorCalculator(
       width: width,
       height: height,
+      position: position,
+      negative: true,
       referencePosition: ReferencePosition(
         widget.referencePosition,
         widget.referencePosition,
       ),
-      position: position,
-      negative: true,
     ).calculate();
 
     setState(() {

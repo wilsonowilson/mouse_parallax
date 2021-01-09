@@ -61,9 +61,9 @@ abstract class ParallaxFactorCalculator {
 }
 
 /// A calculator for reference positions between -1 and 1
-class RangeParallaxFactorCalculator implements ParallaxFactorCalculator {
+class RelativeParallaxFactorCalculator implements ParallaxFactorCalculator {
   /// A calculator for reference positions between -1 and 1
-  RangeParallaxFactorCalculator({
+  const RelativeParallaxFactorCalculator({
     @required this.width,
     @required this.height,
     @required this.position,

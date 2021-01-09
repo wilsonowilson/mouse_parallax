@@ -1,3 +1,9 @@
+## 0.3.0
+ * Restructured project
+
+## 0.2.3
+ * Docs: Added header image
+
 ## 0.2.2
  * Fixed dimensionalOffset assertion
 

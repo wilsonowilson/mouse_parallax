@@ -36,7 +36,7 @@ void main() {
   });
 
   group('RangeParallaxFactorCalculator Test', () {
-    RangeParallaxFactorCalculator getBasicCalculator({
+    RelativeParallaxFactorCalculator getBasicCalculator({
       OffsetDefault offsetType,
       double referencePosition = 0.5,
       bool negate = false,
@@ -53,7 +53,7 @@ void main() {
           position = const Offset(500, 250);
           break;
       }
-      final calculator = RangeParallaxFactorCalculator(
+      final calculator = RelativeParallaxFactorCalculator(
         width: 1000,
         height: 500,
         referencePosition: ReferencePosition(
