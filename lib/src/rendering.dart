@@ -128,7 +128,7 @@ class ParallaxLayer extends ParentDataWidget<ParallaxStackParentData> {
       needsPaint = true;
       needsLayout = true;
     }
-    if (parentData.offset != offset) {
+    if (parentData.yOffset != yOffset) {
       parentData.yOffset = yOffset;
       needsPaint = true;
       needsLayout = true;
@@ -200,16 +200,16 @@ class RenderParallaxStack extends RenderBox
   set xFactor(double xFactor) {
     _xFactor = xFactor;
     markNeedsPaint();
+    markNeedsLayout();
   }
 
   /// Set the yFactor of the ParallaxStack
   set yFactor(double yFactor) {
     _yFactor = yFactor;
     markNeedsPaint();
+    markNeedsLayout();
   }
 
-  @override
-  bool get isRepaintBoundary => true;
   @override
   void setupParentData(covariant RenderObject child) {
     if (child.parentData is! ParallaxStackParentData) {
@@ -245,7 +245,7 @@ class RenderParallaxStack extends RenderBox
         ),
       );
     }
-    return constraints.biggest;
+    return Size(constraints.maxWidth, constraints.maxHeight);
   }
   // @override
   // void performLayout() {
@@ -273,7 +273,9 @@ class RenderParallaxStack extends RenderBox
         ..rotateY(yRotation * _xFactor)
         ..rotateZ(zRotation * _xFactor);
       final effectiveTransform = _effectiveTransform(transform);
-      canvas.transform(effectiveTransform.storage);
+      canvas
+        ..save()
+        ..transform(effectiveTransform.storage);
       context.paintChild(child, childParentData.offset + offset);
       canvas.restore();
     }
