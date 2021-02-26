@@ -4,40 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mouse_parallax/src/parallax_factor_calculator.dart';
 
-import 'widgets/golden_test_widget.dart';
-
-extension SetScreenSize on WidgetTester {
-  Future<void> setScreenSize(
-      {double width = 540,
-      double height = 960,
-      double pixelDensity = 1}) async {
-    final size = Size(width, height);
-    await binding.setSurfaceSize(size);
-    binding.window.physicalSizeTestValue = size;
-    binding.window.devicePixelRatioTestValue = pixelDensity;
-  }
-}
-
 enum OffsetDefault { topLeft, bottomRight, center }
 void main() {
-  group('Test Rendering', () {
-    testWidgets(
-      'Parallax Layers are positioned correctly',
-      (WidgetTester tester) async {
-        final starterWidget = GoldenTestWidget();
-        await tester.setScreenSize(width: 797, height: 596);
-        await tester.pumpWidget(starterWidget);
-        await expectLater(
-          find.byType(GoldenTestWidget),
-          matchesGoldenFile('goldens/golden1.png'),
-        );
-      },
-    );
-  });
-
   group('RangeParallaxFactorCalculator Test', () {
     RelativeParallaxFactorCalculator getBasicCalculator({
-      OffsetDefault offsetType,
+      required OffsetDefault offsetType,
       double referencePosition = 0.5,
       bool negate = false,
     }) {

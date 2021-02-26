@@ -1,249 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+
+import 'animation.dart';
+import 'gestures.dart';
 import 'parallax_factor_calculator.dart';
+import 'rendering.dart';
 
-typedef _HoverConstraintCallback = void Function(
-  PointerEvent hoverEvent,
-  BoxConstraints constraints,
-);
-
-class _PointerListener extends StatelessWidget {
-  const _PointerListener({
-    Key key,
-    @required this.child,
-    @required this.onEnter,
-    @required this.onExit,
-    @required this.onHover,
-    this.touchBased = false,
-  }) : super(key: key);
-
-  final _HoverConstraintCallback onEnter;
-  final _HoverConstraintCallback onExit;
-  final _HoverConstraintCallback onHover;
-  final bool touchBased;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    Widget listener;
-
-    return LayoutBuilder(builder: (context, constraints) {
-      if (touchBased == true)
-        listener = Listener(
-          onPointerHover: (e) => onHover(e, constraints),
-          onPointerDown: (e) => onEnter(e, constraints),
-          onPointerUp: (e) => onExit(e, constraints),
-          child: child,
-        );
-      listener = MouseRegion(
-        onHover: (e) => onHover(e, constraints),
-        onEnter: (e) => onEnter(e, constraints),
-        onExit: (e) => onExit(e, constraints),
-        child: child,
-      );
-      return listener;
-    });
-  }
-}
-
-/// [_AnimatedTransform] is a custom implicitly animated widget
-/// responsible for animating the transformations of its child.
-class _AnimatedTransform extends ImplicitlyAnimatedWidget {
-  const _AnimatedTransform({
-    Key key,
-    @required this.child,
-    @required Duration duration,
-    this.yRotation = 0,
-    this.xRotation = 0,
-    this.zRotation = 0,
-    this.xOffset = 0,
-    this.yOffset = 0,
-    this.enable3d = false,
-    Curve curve = Curves.ease,
-    this.dimensionalOffset = 0.001,
-    VoidCallback onEnd,
-  }) : super(
-          key: key,
-          curve: curve,
-          duration: duration,
-          onEnd: onEnd,
-        );
-
-  final Widget child;
-  final double yRotation;
-  final double xRotation;
-  final double zRotation;
-  final double xOffset;
-  final double yOffset;
-  final bool enable3d;
-  final double dimensionalOffset;
-
-  @override
-  _AnimatedTransformState createState() => _AnimatedTransformState();
-}
-
-class _AnimatedTransformState
-    extends AnimatedWidgetBaseState<_AnimatedTransform> {
-  Tween<double> _yRotation;
-  Tween<double> _xRotation;
-  Tween<double> _zRotation;
-  Tween<double> _xOffset;
-  Tween<double> _yOffset;
-
-  @override
-  void forEachTween(TweenVisitor<dynamic> visitor) {
-    _yRotation = visitor(_yRotation, widget.yRotation,
-        (dynamic e) => Tween<double>(begin: e as double)) as Tween<double>;
-    _zRotation = visitor(_zRotation, widget.zRotation,
-        (dynamic e) => Tween<double>(begin: e as double)) as Tween<double>;
-    _xRotation = visitor(
-      _xRotation,
-      widget.xRotation,
-      (dynamic e) => Tween<double>(begin: e as double),
-    ) as Tween<double>;
-    _xOffset = visitor(
-      _xOffset,
-      widget.xOffset,
-      (dynamic e) => Tween<double>(begin: e as double),
-    ) as Tween<double>;
-    _yOffset = visitor(
-      _yOffset,
-      widget.yOffset,
-      (dynamic e) => Tween<double>(begin: e as double),
-    ) as Tween<double>;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final transform = Matrix4.identity();
-    if (widget.enable3d) transform..setEntry(3, 2, widget.dimensionalOffset);
-    transform
-      ..rotateY(_yRotation.evaluate(animation))
-      ..rotateX(_xRotation?.evaluate(animation))
-      ..rotateZ(_zRotation?.evaluate(animation));
-    return Transform.translate(
-      offset: Offset(
-        _xOffset?.evaluate(animation) ?? 0,
-        _yOffset?.evaluate(animation) ?? 0,
-      ),
-      child: Transform(
-        transform: transform,
-        alignment: Alignment.center,
-        child: widget.child,
-      ),
-    );
-  }
-}
-
-/// A layer in the parallax stack.
-/// This serves as a blueprint for the transformations of a widget in a
-/// [ParallaxStack]. It contains all the animatable properties of the child.
-/// This is not a widget.
-class ParallaxLayer {
-  /// Creates a Parallax layer. It contains all the animatable properties of
-  /// the child, as well as properties like [center] and [offset] which
-  /// are used to position it.
-  ParallaxLayer({
-    @required this.child,
-    this.xOffset = 0.0,
-    this.yOffset = 0.0,
-    this.xRotation = 0.0,
-    this.yRotation = 0.0,
-    this.zRotation = 0.0,
-    this.enable3D = false,
-    this.center = false,
-    this.offset = const Offset(0, 0),
-    this.dimensionalOffset,
-  }) {
-    if (!enable3D) {
-      assert(
-        dimensionalOffset == null,
-        'You should only use a dimensional offset when 3D is enabled. '
-        'To enable3D, set the `enable3D` property to true.',
-      );
-    }
-  }
-
-  /// The Widget which should be animated. This must not be null.
-  final Widget child;
-
-  /// How much the [child] should translate on the horizontal axis when a
-  /// pointer event occurs.
-  final double xOffset;
-
-  /// How much the [child] should translate on the verical axis when a
-  /// pointer event occurs.
-  final double yOffset;
-
-  /// How much the [child] should rotate on the x axis when
-  /// a pointer event occurs. The nature of the rotation is up-down
-  final double xRotation;
-
-  /// How much the [child] should rotate on the y axis when
-  /// a pointer event occurs. The nature of the rotation is left-right
-  final double yRotation;
-
-  /// How much the [child] should rotate on the z axis when
-  /// a pointer event occurs. If you actually want to "spin" the
-  /// widget as the pointer moves across the screen, use this.
-  final double zRotation;
-
-  /// Whether the [child] should be transformed with a 3D-effect.
-  /// This simply sets the entry point of the Transformation matrix
-  /// to (3,2, 0.001). The intensity of the 3D can be
-  /// customized using the [dimensionalOffset] property.
-  final bool enable3D;
-
-  /// Whether the [child] should be positioned in the
-  /// center of the [ParallaxStack]. This automatically wraps
-  /// the child in a [Center] widget.  This property is only
-  /// here to make positioning a [ParallaxLayer] more intuitive.
-  /// You can still wrap your child in a [Center]
-  /// or [Positioned] widget.
-  final bool center;
-
-  /// The offset of the [child]  in the Parallax Stack.
-  /// This works similar to the [Positioned] widget or the
-  /// translate constructor of the [Transform] widget.
-  /// Just like the [center] property, this property is only
-  /// here to make positioning a [ParallaxLayer] more intuitive.
-  /// You can still wrap your child in a [Center]
-  /// or [Positioned] widget.
-  final Offset offset;
-
-  /// The intensity of the 3D animation.
-  final double dimensionalOffset;
-}
-
-/// A Widget that allows you to stack parallax layers.
-/// This is a wrapper around the [Stack] widget so it behaves similarly to it.
-/// By default, it expands to fill the parent, so it's size can be adjusted
-/// by wrapping it with a [SizedBox], [Container] or similar.
+/// {@template parallax_stack}
+/// A Widget that allows you to stack and animate the children of
+/// parallax layers.
+/// {@endtemplate}
 class ParallaxStack extends StatefulWidget {
-  /// A Widget that allows you to stack parallax layers.
-  /// This is a wrapper around the [Stack] widget so it behaves similarly to it.
-  /// By default, it expands to fill the parent, so it's size can be adjusted
-  /// by wrapping it with a [SizedBox], [Container] or similar. It also
-  /// comes with a [width] and [height] property for more intuitive sizing.
-  ParallaxStack({
-    Key key,
-    @required this.layers,
-    this.width,
-    this.height,
+  /// {@macro parallax_stack}
+  const ParallaxStack({
+    Key? key,
+    required this.layers,
+    this.useLocalPosition = true,
+    this.resetOnExit = true,
     this.referencePosition = 0.5,
-    this.touchBased = false,
-    this.resetOnExit = false,
-    this.useLocalPosition = false,
-    this.dragCurve = Curves.ease,
-    this.resetCurve = Curves.ease,
     this.drag = const Duration(milliseconds: 100),
+    this.dragCurve = Curves.ease,
     this.resetDuration = const Duration(milliseconds: 1200),
-  })  : assert(layers != null && layers.isNotEmpty),
-        super(key: key);
-
-  /// A list of [ParallaxLayer]s which will be mapped to widget depending
-  /// on the properties of the layer.
-  final List<ParallaxLayer> layers;
+    this.resetCurve = Curves.ease,
+  }) : super(key: key);
 
   /// Whether the parallax should be referenced from the size and position
   /// of the [ParallaxStack]. If it is false, the Parallax will be measured
@@ -252,24 +31,17 @@ class ParallaxStack extends StatefulWidget {
   /// to set this to true.
   final bool useLocalPosition;
 
-  /// The width of the [ParallaxStack]
-  final double width;
-
-  /// The height of the [ParallaxStack]
-  final double height;
+  /// Whether the animation should reset to the default position when
+  /// the pointer leaves the hover region.
+  final bool resetOnExit;
 
   /// Where the parallax effect should be referenced from. This is a scale
   /// from 0-1. Its default value is 0.5, meaning that the
   ///  parallax is referenced from the center.
   final double referencePosition;
 
-  /// Whether the [ParallaxStack] should work with touch events
-  /// instead of hover events.
-  final bool touchBased;
-
-  /// Whether the animation should reset to the default position when
-  /// the pointer leaves the hover region.
-  final bool resetOnExit;
+  /// A list of [ParallaxLayer]s
+  final List<ParallaxLayer> layers;
 
   /// The duration of the animation that takes place
   ///  when pointer events occur and when the widget
@@ -290,55 +62,33 @@ class ParallaxStack extends StatefulWidget {
   /// only apply when [resetOnExit] is true.
 
   final Curve resetCurve;
-
   @override
   _ParallaxStackState createState() => _ParallaxStackState();
 }
 
 class _ParallaxStackState extends State<ParallaxStack> {
+  double xFactor = 0;
+  double yFactor = 0;
   bool hovering = false;
-  double xFactor = 0.0;
-  double yFactor = 0.0;
-
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: widget.width,
-      height: widget.height,
-      child: _PointerListener(
-        touchBased: widget.touchBased,
-        onEnter: (_, __) => setState(() => hovering = true),
-        onExit: (_, __) => setState(() {
-          hovering = false;
-          if (widget.resetOnExit) {
-            xFactor = 0.0;
-            yFactor = 0.0;
-          }
-        }),
-        onHover: _mapPointerEventToFactor,
-        child: Stack(
-          children: widget.layers.map(_mapParallaxLayerToWidget).toList(),
-        ),
-      ),
-    );
-  }
-
-  Widget _mapParallaxLayerToWidget(ParallaxLayer layer) {
-    var child = layer.child;
-    if (layer.center) child = Center(child: layer.child);
-    return Transform.translate(
-      offset: layer.offset,
-      child: _AnimatedTransform(
+    return PointerListener(
+      touchBased: false,
+      onEnter: (_, __) => setState(() => hovering = true),
+      onExit: (_, __) => setState(() {
+        hovering = false;
+        if (widget.resetOnExit) {
+          xFactor = 0.0;
+          yFactor = 0.0;
+        }
+      }),
+      onHover: _mapPointerEventToFactor,
+      child: AnimatedParallaxStack(
+        children: widget.layers,
+        xFactor: xFactor,
+        yFactor: yFactor,
         duration: hovering ? widget.drag : widget.resetDuration,
         curve: hovering ? widget.dragCurve : widget.resetCurve,
-        yRotation: layer.yRotation * xFactor,
-        enable3d: layer.enable3D,
-        dimensionalOffset: layer.dimensionalOffset ?? 0.001,
-        zRotation: layer.zRotation * xFactor,
-        xRotation: layer.xRotation * yFactor,
-        xOffset: layer.xOffset * xFactor,
-        yOffset: layer.yOffset * yFactor,
-        child: child,
       ),
     );
   }
@@ -354,7 +104,7 @@ class _ParallaxStackState extends State<ParallaxStack> {
       width: width,
       height: height,
       position: position,
-      negative: true,
+      negative: false,
       referencePosition: ReferencePosition(
         widget.referencePosition,
         widget.referencePosition,

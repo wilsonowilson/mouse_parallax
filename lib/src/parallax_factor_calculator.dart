@@ -38,10 +38,10 @@ class ParallaxFactor {
 abstract class ParallaxFactorCalculator {
   /// A caclulator used to generate reference positions for parallax.
   ParallaxFactorCalculator({
-    this.width,
-    this.height,
-    this.referencePosition,
-    this.position,
+    required this.width,
+    required this.height,
+    required this.referencePosition,
+    required this.position,
   });
 
   /// Used to calculate the necessary parallax factor.
@@ -64,9 +64,9 @@ abstract class ParallaxFactorCalculator {
 class RelativeParallaxFactorCalculator implements ParallaxFactorCalculator {
   /// A calculator for reference positions between -1 and 1
   const RelativeParallaxFactorCalculator({
-    @required this.width,
-    @required this.height,
-    @required this.position,
+    required this.width,
+    required this.height,
+    required this.position,
     this.negative = true,
     this.referencePosition = const ReferencePosition(0.5, 0.5),
   });
