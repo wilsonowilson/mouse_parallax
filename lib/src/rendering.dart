@@ -238,7 +238,12 @@ class RenderParallaxStack extends RenderBox
   Size computeDryLayout(BoxConstraints constraints) {
     final children = getChildrenAsList();
     for (final child in children) {
-      child.layout(constraints);
+      child.layout(
+        BoxConstraints(
+          maxWidth: constraints.maxWidth,
+          maxHeight: constraints.maxHeight,
+        ),
+      );
     }
     return constraints.biggest;
   }
