@@ -211,6 +211,11 @@ class RenderParallaxStack extends RenderBox
   }
 
   @override
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
+    return defaultHitTestChildren(result, position: position);
+  }
+
+  @override
   void setupParentData(covariant RenderObject child) {
     if (child.parentData is! ParallaxStackParentData) {
       child.parentData = ParallaxStackParentData();
@@ -273,11 +278,12 @@ class RenderParallaxStack extends RenderBox
         ..rotateY(yRotation * _xFactor)
         ..rotateZ(zRotation * _xFactor);
       final effectiveTransform = _effectiveTransform(transform);
-      canvas
-        ..save()
-        ..transform(effectiveTransform.storage);
-      context.paintChild(child, childParentData.offset + offset);
-      canvas.restore();
+
+      context.pushTransform(needsCompositing, offset, effectiveTransform,
+          (context, offset) {
+        context.paintChild(child, childParentData.offset + offset);
+      });
+      // canvas.restore();
     }
   }
 }

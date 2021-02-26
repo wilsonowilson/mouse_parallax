@@ -41,7 +41,7 @@ class ParallaxStack extends StatefulWidget {
   final double referencePosition;
 
   /// A list of [ParallaxLayer]s
-  final List<ParallaxLayer> layers;
+  final List<Widget> layers;
 
   /// The duration of the animation that takes place
   ///  when pointer events occur and when the widget

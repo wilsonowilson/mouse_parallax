@@ -19,7 +19,7 @@ class AnimatedParallaxStack extends ImplicitlyAnimatedWidget {
   }) : super(key: key, duration: duration, curve: curve);
 
   /// A list of [ParallaxLayer]s.
-  final List<ParallaxLayer> children;
+  final List<Widget> children;
 
   /// The distance the mouse has moved across the x axis of the screen
   /// represented by a range of values from -1 to 1
