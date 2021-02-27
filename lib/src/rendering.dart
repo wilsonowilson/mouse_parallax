@@ -260,7 +260,6 @@ class RenderParallaxStack extends RenderBox
       );
       if (childParentData.enable3d ?? false)
         transform.setEntry(3, 2, childParentData.dimensionalOffset ?? 0.001);
-      final canvas = context.canvas;
       final xRotation = childParentData.xRotation ?? 0.0;
       final yRotation = childParentData.yRotation ?? 0.0;
       final zRotation = childParentData.zRotation ?? 0.0;
