@@ -80,3 +80,6 @@ build/
 !**/ios/**/default.pbxuser
 !**/ios/**/default.perspectivev3
 example/lib/example2.dart
+example/lib/examples/background_animation.dart
+.gitignore
+example/lib/examples/example3.dart

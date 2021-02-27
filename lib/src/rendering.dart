@@ -101,41 +101,33 @@ class ParallaxLayer extends ParentDataWidget<ParallaxStackParentData> {
     if (parentData.xRotation != xRotation) {
       parentData.xRotation = xRotation;
       needsPaint = true;
-      needsLayout = true;
     }
     if (parentData.yRotation != yRotation) {
       parentData.yRotation = yRotation;
       needsPaint = true;
-      needsLayout = true;
     }
     if (parentData.zRotation != zRotation) {
       parentData.zRotation = zRotation;
       needsPaint = true;
-      needsLayout = true;
     }
     if (parentData.dimensionalOffset != dimensionalOffset) {
       parentData.dimensionalOffset = dimensionalOffset;
       needsPaint = true;
-      needsLayout = true;
     }
     if (parentData.enable3d != enable3d) {
       parentData.enable3d = enable3d;
       needsPaint = true;
-      needsLayout = true;
     }
     if (parentData.xOffset != xOffset) {
       parentData.xOffset = xOffset;
-      needsPaint = true;
       needsLayout = true;
     }
     if (parentData.yOffset != yOffset) {
       parentData.yOffset = yOffset;
-      needsPaint = true;
       needsLayout = true;
     }
     if (parentData.offset != offset) {
       parentData.offset = offset;
-      needsPaint = true;
       needsLayout = true;
     }
 
@@ -200,14 +192,12 @@ class RenderParallaxStack extends RenderBox
   set xFactor(double xFactor) {
     _xFactor = xFactor;
     markNeedsPaint();
-    markNeedsLayout();
   }
 
   /// Set the yFactor of the ParallaxStack
   set yFactor(double yFactor) {
     _yFactor = yFactor;
     markNeedsPaint();
-    markNeedsLayout();
   }
 
   @override
@@ -239,8 +229,14 @@ class RenderParallaxStack extends RenderBox
 
   @override
   bool get sizedByParent => true;
+
   @override
   Size computeDryLayout(BoxConstraints constraints) {
+    return Size(constraints.maxWidth, constraints.maxHeight);
+  }
+
+  @override
+  void performLayout() {
     final children = getChildrenAsList();
     for (final child in children) {
       child.layout(
@@ -250,12 +246,7 @@ class RenderParallaxStack extends RenderBox
         ),
       );
     }
-    return Size(constraints.maxWidth, constraints.maxHeight);
   }
-  // @override
-  // void performLayout() {
-
-  // }
 
   @override
   void paint(PaintingContext context, Offset offset) {
