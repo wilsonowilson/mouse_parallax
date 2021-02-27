@@ -206,6 +206,9 @@ class RenderParallaxStack extends RenderBox
   }
 
   @override
+  bool hitTestSelf(Offset position) => true;
+
+  @override
   void setupParentData(covariant RenderObject child) {
     if (child.parentData is! ParallaxStackParentData) {
       child.parentData = ParallaxStackParentData();

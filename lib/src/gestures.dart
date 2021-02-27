@@ -38,7 +38,7 @@ class PointerListener extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget listener;
+    late Widget listener;
 
     return LayoutBuilder(builder: (context, constraints) {
       listener = MouseRegion(
@@ -47,6 +47,13 @@ class PointerListener extends StatelessWidget {
         onExit: (e) => onExit(e, constraints),
         child: child,
       );
+      if (touchBased)
+        listener = Listener(
+          onPointerMove: (e) => onHover(e, constraints),
+          onPointerDown: (e) => onEnter(e, constraints),
+          onPointerUp: (e) => onExit(e, constraints),
+          child: child,
+        );
       return listener;
     });
   }

@@ -15,6 +15,7 @@ class ParallaxStack extends StatefulWidget {
   const ParallaxStack({
     Key? key,
     required this.layers,
+    this.touchBased = false,
     this.useLocalPosition = true,
     this.resetOnExit = true,
     this.referencePosition = 0.5,
@@ -62,6 +63,11 @@ class ParallaxStack extends StatefulWidget {
   /// only apply when [resetOnExit] is true.
 
   final Curve resetCurve;
+
+  /// Whether the parallax stack should listen to touches instead of
+  /// hover events.
+  final bool touchBased;
+
   @override
   _ParallaxStackState createState() => _ParallaxStackState();
 }
@@ -73,7 +79,7 @@ class _ParallaxStackState extends State<ParallaxStack> {
   @override
   Widget build(BuildContext context) {
     return PointerListener(
-      touchBased: false,
+      touchBased: widget.touchBased,
       onEnter: (_, __) => setState(() => hovering = true),
       onExit: (_, __) => setState(() {
         hovering = false;
