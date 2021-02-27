@@ -1,3 +1,7 @@
+## 1.0.0
+ * Migrated to null safety.
+ * Improved implementation.
+
 ## 0.3.0
  * Restructured project
 
