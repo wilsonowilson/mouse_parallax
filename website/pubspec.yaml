@@ -21,3 +21,8 @@ flutter:
   uses-material-design: true
   assets:
     - images/
+    
+  fonts:
+    - family: Quicksand
+      fonts:
+        - asset: fonts/Quicksand.ttf

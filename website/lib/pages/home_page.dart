@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:mouse_parallax/mouse_parallax.dart';
 
@@ -19,9 +17,9 @@ class HomePage extends StatelessWidget {
         dragCurve: curve,
         layers: [
           BackgroundLayer(),
-          Shade(color: Color.fromRGBO(20, 20, 35, 0.8)),
+          const Shade(color: Colors.black45),
           Wave3(),
-          const Shade(color: Colors.black26),
+          const Shade(color: Colors.black38),
           Scribbles(),
           Wave2(),
           const Shade(),

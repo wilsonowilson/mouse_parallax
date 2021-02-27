@@ -13,6 +13,7 @@ class MyApp extends StatelessWidget {
       title: 'Mouse Parallax',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        fontFamily: 'Quicksand',
       ),
       home: HomePage(),
     );

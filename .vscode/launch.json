@@ -16,7 +16,7 @@
             "request": "launch",
             "program": "website/lib/main.dart",
             "type": "dart",
-            "deviceId": "chrome"
+            "deviceId": "chrome",
         }
     ]
 }

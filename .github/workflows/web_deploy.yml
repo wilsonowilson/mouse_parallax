@@ -17,14 +17,14 @@ jobs:
           persist-credentials: false
       - uses: subosito/flutter-action@v1.4.0
         with:
-          channel: dev
+          channel: master
 
       - name: Build demo web app
         run: |
           cd website
           flutter pub get
           flutter config --enable-web
-          flutter build web --web-renderer canvaskit
+          flutter build web --web-renderer html
           cd build/web
           touch ".nojekyll"
 
@@ -35,5 +35,5 @@ jobs:
           BRANCH: gh-pages
           FOLDER: website/build/web
           GIT_CONFIG_NAME: wilsonowilson
-          GIT_CONFIG_EMAIL: wilsonwilson@gmail.com
+          GIT_CONFIG_EMAIL: wilsonwilsondev@gmail.com
           COMMIT_MESSAGE: Deploy mouse parallax website
