@@ -3,9 +3,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:mouse_parallax/mouse_parallax.dart';
 
-import 'components/info.dart';
-import 'components/objects.dart';
-import 'components/waves.dart';
+import '../components/info.dart';
+import '../components/objects.dart';
+import '../components/waves.dart';
 
 const drag = Duration(milliseconds: 1800);
 const curve = Curves.easeOutQuint;
