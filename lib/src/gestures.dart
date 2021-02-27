@@ -41,13 +41,6 @@ class PointerListener extends StatelessWidget {
     Widget listener;
 
     return LayoutBuilder(builder: (context, constraints) {
-      if (touchBased == true)
-        listener = Listener(
-          onPointerHover: (e) => onHover(e, constraints),
-          onPointerDown: (e) => onEnter(e, constraints),
-          onPointerUp: (e) => onExit(e, constraints),
-          child: child,
-        );
       listener = MouseRegion(
         onHover: (e) => onHover(e, constraints),
         onEnter: (e) => onEnter(e, constraints),
